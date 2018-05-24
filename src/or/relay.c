@@ -276,7 +276,7 @@ circuit_update_channel_usage(circuit_t *circ, cell_t *cell)
 int
 send_fake_cells(circuit_t *circ, cell_t *real_cell)
 {
-
+	log_debug(LD_OR,"sending fake cells");
 }
 
 /** temp code here. TODO:move to main loop */
@@ -320,9 +320,8 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   //make a fake cell
   //transford this cell through specific circuit
   if (!circ_fake && create_circuit_fake(circ_fake)){
-	//failed
+      log_debug(LD_OR,"Create circ_fake failed");
   } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
-	//failed
   }
 
 
