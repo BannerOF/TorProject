@@ -318,12 +318,10 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   //random
   //make a fake cell
   //transford this cell through specific circuit
-  if(routerlist){
-	  if (!circ_fake && create_circuit_fake(circ_fake)){
-		//failed
-	  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
-		//failed
-	  }
+  if (!circ_fake && create_circuit_fake(circ_fake)){
+	//failed
+  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
+	//failed
   }
 
 
