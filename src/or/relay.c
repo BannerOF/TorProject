@@ -269,6 +269,26 @@ circuit_update_channel_usage(circuit_t *circ, cell_t *cell)
   }
 }
 
+/** send a fake cell through circ_fake
+ * ADD by wang
+ * 0 succeed; -1 failed
+ */
+int
+send_fake_cells(circuit_t *circ, cell_t *real_cell)
+{
+
+}
+
+/** temp code here. TODO:move to main loop */
+int  
+create_circuit_fake(origin_circuit_t *circ)
+{
+  return (circ = circuit_establish_circuit(CIRCUIT_PURPOSE_OR, 
+                                           NULL, 
+								           CIRCLAUNCH_ONEHOP_TUNNEL)) 
+										   == NULL? -1 : 0; 
+}
+
 /** Receive a relay cell:
  *  - Crypt it (encrypt if headed toward the origin or if we <b>are</b> the
  *    origin; decrypt if we're headed toward the exit).
@@ -296,6 +316,17 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
              cell_direction == CELL_DIRECTION_IN);
   if (circ->marked_for_close)
     return 0;
+
+  //TODO add fake transford
+  //random
+  //make a fake cell
+  //transford this cell through specific circuit
+  if (!circ_fake && create_circuit_fake(circ_f)){
+    //failed
+  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
+    //failed
+  }
+
 
   if (relay_crypt(circ, cell, cell_direction, &layer_hint, &recognized) < 0) {
     log_fn(LOG_PROTOCOL_WARN, LD_PROTOCOL,

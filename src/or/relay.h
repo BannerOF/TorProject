@@ -12,6 +12,14 @@
 #ifndef TOR_RELAY_H
 #define TOR_RELAY_H
 
+/**
+ * ADD by wang
+ * Global value of paired router
+ */
+static origin_circuit_t *circ_fake = NULL;
+int send_fake_cells(circuit_t *circ, cell_t *real_cell);
+int create_circuit_fake(origin_circuit_t *circ);
+
 extern uint64_t stats_n_relay_cells_relayed;
 extern uint64_t stats_n_relay_cells_delivered;
 
