@@ -283,9 +283,7 @@ send_fake_cells(circuit_t *circ, cell_t *real_cell)
 int  
 create_circuit_fake(origin_circuit_t *circ)
 {
-  return (circ = circuit_establish_circuit(CIRCUIT_PURPOSE_OR, 
-                                           NULL, 
-								           CIRCLAUNCH_ONEHOP_TUNNEL)) 
+  return (circ = circuit_establish_circuit(CIRCUIT_PURPOSE_OR, NULL, CIRCLAUNCH_ONEHOP_TUNNEL)) 
 										   == NULL? -1 : 0; 
 }
 
