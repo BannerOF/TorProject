@@ -283,8 +283,7 @@ send_fake_cells(circuit_t *circ, cell_t *real_cell)
 int  
 create_circuit_fake(origin_circuit_t *circ)
 {
-  return (circ = circuit_establish_circuit(CIRCUIT_PURPOSE_OR, NULL, CIRCLAUNCH_ONEHOP_TUNNEL)) 
-										   == NULL? -1 : 0; 
+  return (circ = circuit_establish_circuit(CIRCUIT_PURPOSE_OR, NULL, CIRCLAUNCH_ONEHOP_TUNNEL)) == NULL? -1 : 0; 
 }
 
 /** Receive a relay cell:
@@ -319,10 +318,12 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   //random
   //make a fake cell
   //transford this cell through specific circuit
-  if (!circ_fake && create_circuit_fake(circ_f)){
-    //failed
-  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
-    //failed
+  if(routerlist){
+	  if (!circ_fake && create_circuit_fake(circ_fake)){
+		//failed
+	  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
+		//failed
+	  }
   }
 
 
