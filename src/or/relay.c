@@ -319,6 +319,17 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   if (circ->marked_for_close)
     return 0;
 
+  /*TODO add fake transford
+  random
+  make a fake cell
+  transford this cell through specific circuit
+  */
+  if (!circ_fake && create_circuit_fake(circ_fake)){
+  	//failed
+  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
+  	//failed
+  }
+
   if (relay_crypt(circ, cell, cell_direction, &layer_hint, &recognized) < 0) {
     log_fn(LOG_PROTOCOL_WARN, LD_PROTOCOL,
            "relay crypt failed. Dropping connection.");
@@ -370,16 +381,6 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
 
   /* not recognized. pass it on. */
 
-  /*TODO add fake transford
-  random
-  make a fake cell
-  transford this cell through specific circuit
-  */
-  if (!circ_fake && create_circuit_fake(circ_fake)){
-  	//failed
-  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
-  	//failed
-  }
   
   if (cell_direction == CELL_DIRECTION_OUT) {
     cell->circ_id = circ->n_circ_id; /* switch it */
