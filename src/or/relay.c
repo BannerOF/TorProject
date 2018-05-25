@@ -281,6 +281,7 @@ send_fake_cells(circuit_t *circ, cell_t *real_cell)
 	//cell->circ_id = circ->n_circ_id;
 	//chan = circ->n_chan;
 	//append_cell_to_circuit_queue(circ, chan, cell, CELL_DIRECTION_OUT);
+	log_notice(LD_GENERAL, "sending");
 }
 
 /** temp code here. TODO:move to main loop */
