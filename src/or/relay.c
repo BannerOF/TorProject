@@ -276,14 +276,19 @@ circuit_update_channel_usage(circuit_t *circ, cell_t *cell)
 int
 send_fake_cells(circuit_t *circ, cell_t *real_cell)
 {
+	//生成fake cell
+	//加密
+	cell->circ_id = circ->n_circ_id;
+	chan = circ->n_chan;
+	append_cell_to_circuit_queue(circ, chan, cell, CELL_DIRECTION_OUT);
 }
 
 /** temp code here. TODO:move to main loop */
 int  
 create_circuit_fake(origin_circuit_t *circ)
 {
-  return (circ = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL
-  , NULL, CIRCLAUNCH_ONEHOP_TUNNEL)) == NULL? -1 : 0; 
+  circ = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL , NULL, CIRCLAUNCH_ONEHOP_TUNNEL); 
+  circuit_send_next_onion_skin(circ);
 }
 
 /** Receive a relay cell:
@@ -313,16 +318,6 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
              cell_direction == CELL_DIRECTION_IN);
   if (circ->marked_for_close)
     return 0;
-
-  //TODO add fake transford
-  //random
-  //make a fake cell
-  //transford this cell through specific circuit
-  if (!circ_fake && create_circuit_fake(circ_fake)){
-  	return 0;
-  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
-  }
-
 
   if (relay_crypt(circ, cell, cell_direction, &layer_hint, &recognized) < 0) {
     log_fn(LOG_PROTOCOL_WARN, LD_PROTOCOL,
@@ -374,6 +369,18 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   }
 
   /* not recognized. pass it on. */
+
+  /*TODO add fake transford
+  random
+  make a fake cell
+  transford this cell through specific circuit
+  */
+  if (!circ_fake && create_circuit_fake(circ_fake)){
+  	//failed
+  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
+  	//failed
+  }
+  
   if (cell_direction == CELL_DIRECTION_OUT) {
     cell->circ_id = circ->n_circ_id; /* switch it */
     chan = circ->n_chan;
