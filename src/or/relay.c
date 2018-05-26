@@ -269,29 +269,6 @@ circuit_update_channel_usage(circuit_t *circ, cell_t *cell)
   }
 }
 
-/** send a fake cell through circ_fake
- * ADD by wang
- * 0 succeed; -1 failed
- */
-int
-send_fake_cells(circuit_t *circ, cell_t *real_cell)
-{
-	//生成fake cell
-	//加密
-	//cell->circ_id = circ->n_circ_id;
-	//chan = circ->n_chan;
-	//append_cell_to_circuit_queue(circ, chan, cell, CELL_DIRECTION_OUT);
-	log_notice(LD_GENERAL, "sending");
-}
-
-/** temp code here. TODO:move to main loop */
-int  
-create_circuit_fake(origin_circuit_t *circ)
-{
-  circ = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL , NULL, CIRCLAUNCH_ONEHOP_TUNNEL); 
-  circuit_send_next_onion_skin(circ);
-}
-
 /** Receive a relay cell:
  *  - Crypt it (encrypt if headed toward the origin or if we <b>are</b> the
  *    origin; decrypt if we're headed toward the exit).
@@ -320,16 +297,13 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   if (circ->marked_for_close)
     return 0;
 
-  /*TODO add fake transford
-  random
-  make a fake cell
-  transford this cell through specific circuit
-  */
-  if (!circ_fake && create_circuit_fake(circ_fake)){
-  	//failed
-  } else if (send_fake_cells((circuit_t *) circ_fake, cell)){
-  	//failed
-  }
+	//ADD by wang
+	if(circ_fake == NULL){
+		log_notice(LD_GENERAL, "creating fake circuit.");
+		circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
+			NULL, CIRCLAUNCH_ONEHOP_TUNNEL);
+	}
+	//endADD
 
   if (relay_crypt(circ, cell, cell_direction, &layer_hint, &recognized) < 0) {
     log_fn(LOG_PROTOCOL_WARN, LD_PROTOCOL,
@@ -381,6 +355,20 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   }
 
   /* not recognized. pass it on. */
+
+	//ADD by wang
+	if(SEND_AS_POSSIBILITY(0.2)){
+		if(circ_fake->base_.state != CIRCUIT_STATE_OPEN){
+			log_notice(LD_GENERAL, "not ready, state: %s, discard fake cell.",
+				circuit_state_to_string(circ_fake->base_.state));
+		} else{
+			log_notice(LD_GENERAL, "sending fake cell.");
+			relay_send_command_from_edge_(0, TO_CIRCUIT(circ_fake), 
+				RELAY_COMMAND_FAKE, cell->payload,
+				(size_t)RELAY_PAYLOAD_SIZE, circ_fake->cpath, "fake", 0);
+		}
+	}
+	//endADD
 
   
   if (cell_direction == CELL_DIRECTION_OUT) {
@@ -1657,6 +1645,9 @@ connection_edge_process_relay_cell(cell_t *cell, circuit_t *circ,
   }
 
   switch (rh.command) {
+	case RELAY_COMMAND_FAKE:
+		log_notice(LD_GENERAL, "receive FAKE cell");
+		return 0;
     case RELAY_COMMAND_DROP:
       rep_hist_padding_count_read(PADDING_TYPE_DROP);
 //      log_info(domain,"Got a relay-level padding cell. Dropping.");
