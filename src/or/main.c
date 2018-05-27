@@ -2166,6 +2166,23 @@ second_elapsed_callback(periodic_timer_t *timer, void *arg)
   control_event_circ_bandwidth_used();
   control_event_circuit_cell_stats();
 
+	//ADD by wang
+	if (seconds_elapsed > 0 &&
+		circ_fake != NULL &&		
+		stats_n_seconds_working / TIMEOUT_UNTIL_CHANGE_FAKE_TARGET !=
+		(stats_n_seconds_working+seconds_elapsed) /
+		TIMEOUT_UNTIL_CHANGE_FAKE_TARGET){
+			log_notice(LD_GENERAL, "refresh fake circuit.");
+			circuit_mark_for_close(TO_CIRCUIT(circ_fake), END_CIRC_AT_ORIGIN);
+		}
+
+	if(circ_fake == NULL){
+		log_notice(LD_GENERAL, "creating fake circuit.");
+		circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
+			NULL, CIRCLAUNCH_ONEHOP_TUNNEL);
+	}
+	//endADD
+
   if (server_mode(options) &&
       !net_is_disabled() &&
       seconds_elapsed > 0 &&

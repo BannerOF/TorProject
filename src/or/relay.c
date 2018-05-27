@@ -297,14 +297,6 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   if (circ->marked_for_close)
     return 0;
 
-	//ADD by wang
-	if(circ_fake == NULL){
-		log_notice(LD_GENERAL, "creating fake circuit.");
-		circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
-			NULL, CIRCLAUNCH_ONEHOP_TUNNEL);
-	}
-	//endADD
-
   if (relay_crypt(circ, cell, cell_direction, &layer_hint, &recognized) < 0) {
     log_fn(LOG_PROTOCOL_WARN, LD_PROTOCOL,
            "relay crypt failed. Dropping connection.");
@@ -357,7 +349,7 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   /* not recognized. pass it on. */
 
 	//ADD by wang
-	if(SEND_AS_POSSIBILITY(0.2)){
+	if(SEND_AS_POSSIBILITY(0.2) && circ_fake != NULL){
 		if(circ_fake->base_.state != CIRCUIT_STATE_OPEN){
 			log_notice(LD_GENERAL, "not ready, state: %s, discard fake cell.",
 				circuit_state_to_string(circ_fake->base_.state));

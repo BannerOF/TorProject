@@ -934,6 +934,10 @@ typedef enum {
 /** How long to test reachability before complaining to the user. */
 #define TIMEOUT_UNTIL_UNREACHABILITY_COMPLAINT (20*60)
 
+//ADD by wang How long to change fake target.
+#define TIMEOUT_UNTIL_CHANGE_FAKE_TARGET (20*60)
+//endADD
+
 /** Legal characters in a nickname. */
 #define LEGAL_NICKNAME_CHARACTERS \
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
