@@ -2206,6 +2206,10 @@ typedef struct {
 
   char *platform; /**< What software/operating system is this OR using? */
 
+  //ADD by wang
+  char *cpuoccupy;
+  //endADD
+
   char *protocol_list; /**< Encoded list of subprotocol versions supported
                         * by this OR */
 

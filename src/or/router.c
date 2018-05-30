@@ -2179,6 +2179,11 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
   extrainfo_t *ei;
   uint32_t addr;
   char platform[256];
+
+  //ADD by wang
+  char cpuoccupy[256];
+  //endADD
+
   int hibernating = we_are_hibernating();
   const or_options_t *options = get_options();
 
@@ -2247,6 +2252,11 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
 
   get_platform_str(platform, sizeof(platform));
   ri->platform = tor_strdup(platform);
+
+  //ADD by wang
+  get_cupoccupy_str(cpuoccupy, sizeof(cpuoccupy));
+  ri->cpuoccupy = tor_strdup(cpuoccupy);
+  //endADD
 
   ri->protocol_list = tor_strdup(protover_get_supported_protocols());
 
@@ -2700,6 +2710,15 @@ get_platform_str(char *platform, size_t len)
                get_short_version(), get_uname());
 }
 
+//ADD by wang
+STATIC void
+get_cupoccupy_str(char *cpuoccupy, size_t len)
+{
+	//TODO
+	;
+}
+//endADD
+
 /* XXX need to audit this thing and count fenceposts. maybe
  *     refactor so we don't have to keep asking if we're
  *     near the end of maxlen?
@@ -2915,6 +2934,7 @@ router_dump_router_to_string(routerinfo_t *router,
                     "%s"
                     "%s"
                     "platform %s\n"
+					"cpuoccupy %s\n"
                     "%s"
                     "published %s\n"
                     "fingerprint %s\n"
@@ -2932,6 +2952,11 @@ router_dump_router_to_string(routerinfo_t *router,
     ed_cert_line ? ed_cert_line : "",
     extra_or_address ? extra_or_address : "",
     router->platform,
+
+	//ADD by wang
+    router->cpuoccupy,
+	//endADD
+
     proto_line,
     published,
     fingerprint,

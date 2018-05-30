@@ -157,6 +157,11 @@ smartlist_t *router_get_all_orports(const routerinfo_t *ri);
 #ifdef ROUTER_PRIVATE
 /* Used only by router.c and test.c */
 STATIC void get_platform_str(char *platform, size_t len);
+
+//ADD by wang
+STATIC void get_cupoccupy_str(char *cpuoccupy, size_t len);
+//endADD
+
 STATIC int router_write_fingerprint(int hashed);
 #endif
 
