@@ -122,6 +122,10 @@
 #include "sandbox.h"
 #include "torcert.h"
 
+//ADD by wang
+#include "stdio.h"
+//endADD
+
 // #define DEBUG_ROUTERLIST
 
 /****************************************************************************/
@@ -2718,6 +2722,10 @@ compute_weighted_bandwidths(const smartlist_t *sl,
     } else { /* no guardfraction information. calculate the weight normally. */
       final_weight = weight*this_bw;
     }
+
+	//ADD by wang
+	final_weight *= 100 - atoi(node->cpuoccupy)/100;
+	//endADD
 
     bandwidths[node_sl_idx] = final_weight;
     total_bandwidth += final_weight;

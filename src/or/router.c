@@ -2715,7 +2715,7 @@ STATIC void
 get_cupoccupy_str(char *cpuoccupy, size_t len)
 {
 	//TODO
-	;
+	cpuoccupy = "50";
 }
 //endADD
 
