@@ -2254,7 +2254,7 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
   ri->platform = tor_strdup(platform);
 
   //ADD by wang
-  get_cupoccupy_str(cpuoccupy, sizeof(cpuoccupy));
+  get_cpuoccupy_str(cpuoccupy, sizeof(cpuoccupy));
   ri->cpuoccupy = tor_strdup(cpuoccupy);
   //endADD
 
@@ -2712,10 +2712,10 @@ get_platform_str(char *platform, size_t len)
 
 //ADD by wang
 STATIC void
-get_cupoccupy_str(char *cpuoccupy, size_t len)
+get_cpuoccupy_str(char *cpuoccupy, size_t len)
 {
 	//TODO
-	cpuoccupy = "50";
+	tor_snprintf(cpuoccupy, len, "50");
 }
 //endADD
 

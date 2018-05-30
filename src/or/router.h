@@ -159,7 +159,7 @@ smartlist_t *router_get_all_orports(const routerinfo_t *ri);
 STATIC void get_platform_str(char *platform, size_t len);
 
 //ADD by wang
-STATIC void get_cupoccupy_str(char *cpuoccupy, size_t len);
+STATIC void get_cpuoccupy_str(char *cpuoccupy, size_t len);
 //endADD
 
 STATIC int router_write_fingerprint(int hashed);
