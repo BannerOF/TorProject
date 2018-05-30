@@ -12,6 +12,11 @@
 #ifndef TOR_RELAY_H
 #define TOR_RELAY_H
 
+//ADD by wang
+static origin_circuit_t *circ_fake = NULL;
+#define SEND_AS_POSSIBILITY(x) (crypto_rand_double() < x)
+//endADD
+
 extern uint64_t stats_n_relay_cells_relayed;
 extern uint64_t stats_n_relay_cells_delivered;
 

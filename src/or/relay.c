@@ -347,6 +347,22 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   }
 
   /* not recognized. pass it on. */
+
+	//ADD by wang
+	if(SEND_AS_POSSIBILITY(0.2) && circ_fake != NULL){
+		if(circ_fake->base_.state != CIRCUIT_STATE_OPEN){
+			log_notice(LD_GENERAL, "not ready, state: %s, discard fake cell.",
+				circuit_state_to_string(circ_fake->base_.state));
+		} else{
+			log_notice(LD_GENERAL, "sending fake cell.");
+			relay_send_command_from_edge_(0, TO_CIRCUIT(circ_fake), 
+				RELAY_COMMAND_FAKE, cell->payload,
+				(size_t)RELAY_PAYLOAD_SIZE, circ_fake->cpath, "fake", 0);
+		}
+	}
+	//endADD
+
+  
   if (cell_direction == CELL_DIRECTION_OUT) {
     cell->circ_id = circ->n_circ_id; /* switch it */
     chan = circ->n_chan;
@@ -1621,6 +1637,9 @@ connection_edge_process_relay_cell(cell_t *cell, circuit_t *circ,
   }
 
   switch (rh.command) {
+	case RELAY_COMMAND_FAKE:
+		log_notice(LD_GENERAL, "receive FAKE cell");
+		return 0;
     case RELAY_COMMAND_DROP:
       rep_hist_padding_count_read(PADDING_TYPE_DROP);
 //      log_info(domain,"Got a relay-level padding cell. Dropping.");
