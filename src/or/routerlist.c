@@ -2724,7 +2724,8 @@ compute_weighted_bandwidths(const smartlist_t *sl,
     }
 
 	//ADD by wang
-	final_weight *= 100 - atoi(node->ri->cpuoccupy)/100;
+	if(node->ri)
+		final_weight *= 100 - atoi(node->ri->cpuoccupy)/100;
 	//endADD
 
     bandwidths[node_sl_idx] = final_weight;
