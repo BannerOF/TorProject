@@ -35,6 +35,10 @@
 #include "transports.h"
 #include "routerset.h"
 
+//ADD by wang
+#include <stdio.h>
+//endADD
+
 /**
  * \file router.c
  * \brief Miscellaneous relay functionality, including RSA key maintenance,
@@ -2710,14 +2714,70 @@ get_platform_str(char *platform, size_t len)
                get_short_version(), get_uname());
 }
 
+
+
 //ADD by wang
 STATIC void
 get_cpuoccupy_str(char *cpuoccupy, size_t len)
 {
-	//TODO
-	tor_snprintf(cpuoccupy, len, "50");
+	tor_snprintf(cpuoccupy, len, "%.0f",
+		getCpuRate());
+}
+
+double
+cal_cpuoccupy(CPU_OCCUPY *o, CPU_OCCUPY *n){
+	double od, nd;
+	double id, sd;
+	double cpu_use;
+
+	od = (double) (o->user + o->nice + o->system + o->idle + o->softirq + o->iowait +o->irq);
+	nd = (double) (n->user + n->nice + n->system + n->idle + n->softirq + n->iowait +n->irq);
+	id = (double) (n->idle);
+	sd = (double) (o->idle);
+
+	if((nd - od) != 0)
+		cpu_use = 100.00 - ((id-sd))/(nd-od)*100.00;
+	else
+		cpu_use = 0;
+
+	return cpu_use;
+}
+
+void
+get_cpuoccupy(CPU_OCCUPY *cpust){
+	FILE *fd;
+	int n;
+	char buff[256];
+	CPU_OCCUPY *cpu_occupy;
+	cpu_occupy = cpust;
+
+	fd = fopen("/proc/stat", "r");
+	fgets(buff, sizeof(buff), fd);
+
+	sscanf(buff, "%s %u %u %u %u %u %u %u", cpu_occupy->name, &cpu_occupy->user,
+		&cpu_occupy->nice, &cpu_occupy->system, &cpu_occupy->idle, &cpu_occupy->iowait,
+		&cpu_occupy->irq, &cpu_occupy->softirq);
+
+	fclose(fd);
+}
+
+double
+getCpuRate(){
+	CPU_OCCUPY cpu_stat1;
+	CPU_OCCUPY cpu_stat2;
+	double cpu;
+
+	get_cpuoccupy(&cpu_stat1);
+	sleep(1);
+	get_cpuoccupy(&cpu_stat2);
+	
+	cpu = cal_cpuoccupy(&cpu_stat1, &cpu_stat2);
+
+	return cpu;
 }
 //endADD
+
+
 
 /* XXX need to audit this thing and count fenceposts. maybe
  *     refactor so we don't have to keep asking if we're
