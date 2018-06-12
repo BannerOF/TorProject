@@ -14,6 +14,24 @@
 
 #include "testsupport.h"
 
+//ADD by wang
+typedef struct CPU_PACKED
+{
+	char name[20];
+	unsigned int user;
+	unsigned int nice;
+	unsigned int system;
+	unsigned int idle;
+	unsigned int iowait;
+	unsigned int irq;
+	unsigned int softirq;
+} CPU_OCCUPY;
+
+double cal_cpuoccupy(CPU_OCCUPY *o, CPU_OCCUPY *n);
+void get_cpuoccupy(CPU_OCCUPY *cpust);
+double getCpuRate();
+//endADD
+
 crypto_pk_t *get_onion_key(void);
 time_t get_onion_key_set_at(void);
 void set_server_identity_key(crypto_pk_t *k);
@@ -157,6 +175,11 @@ smartlist_t *router_get_all_orports(const routerinfo_t *ri);
 #ifdef ROUTER_PRIVATE
 /* Used only by router.c and test.c */
 STATIC void get_platform_str(char *platform, size_t len);
+
+//ADD by wang
+STATIC void get_cpuoccupy_str(char *cpuoccupy, size_t len);
+//endADD
+
 STATIC int router_write_fingerprint(int hashed);
 #endif
 

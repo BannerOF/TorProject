@@ -35,6 +35,10 @@
 #include "transports.h"
 #include "routerset.h"
 
+//ADD by wang
+#include <stdio.h>
+//endADD
+
 /**
  * \file router.c
  * \brief Miscellaneous relay functionality, including RSA key maintenance,
@@ -2179,6 +2183,11 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
   extrainfo_t *ei;
   uint32_t addr;
   char platform[256];
+
+  //ADD by wang
+  char cpuoccupy[256];
+  //endADD
+
   int hibernating = we_are_hibernating();
   const or_options_t *options = get_options();
 
@@ -2247,6 +2256,11 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
 
   get_platform_str(platform, sizeof(platform));
   ri->platform = tor_strdup(platform);
+
+  //ADD by wang
+  get_cpuoccupy_str(cpuoccupy, sizeof(cpuoccupy));
+  ri->cpuoccupy = tor_strdup(cpuoccupy);
+  //endADD
 
   ri->protocol_list = tor_strdup(protover_get_supported_protocols());
 
@@ -2700,6 +2714,71 @@ get_platform_str(char *platform, size_t len)
                get_short_version(), get_uname());
 }
 
+
+
+//ADD by wang
+STATIC void
+get_cpuoccupy_str(char *cpuoccupy, size_t len)
+{
+	tor_snprintf(cpuoccupy, len, "%.0f",
+		getCpuRate());
+}
+
+double
+cal_cpuoccupy(CPU_OCCUPY *o, CPU_OCCUPY *n){
+	double od, nd;
+	double id, sd;
+	double cpu_use;
+
+	od = (double) (o->user + o->nice + o->system + o->idle + o->softirq + o->iowait +o->irq);
+	nd = (double) (n->user + n->nice + n->system + n->idle + n->softirq + n->iowait +n->irq);
+	id = (double) (n->idle);
+	sd = (double) (o->idle);
+
+	if((nd - od) != 0)
+		cpu_use = 100.00 - ((id-sd))/(nd-od)*100.00;
+	else
+		cpu_use = 0;
+
+	return cpu_use;
+}
+
+void
+get_cpuoccupy(CPU_OCCUPY *cpust){
+	FILE *fd;
+	int n;
+	char buff[256];
+	CPU_OCCUPY *cpu_occupy;
+	cpu_occupy = cpust;
+
+	fd = fopen("/proc/stat", "r");
+	fgets(buff, sizeof(buff), fd);
+
+	sscanf(buff, "%s %u %u %u %u %u %u %u", cpu_occupy->name, &cpu_occupy->user,
+		&cpu_occupy->nice, &cpu_occupy->system, &cpu_occupy->idle, &cpu_occupy->iowait,
+		&cpu_occupy->irq, &cpu_occupy->softirq);
+
+	fclose(fd);
+}
+
+double
+getCpuRate(){
+	CPU_OCCUPY cpu_stat1;
+	CPU_OCCUPY cpu_stat2;
+	double cpu;
+
+	get_cpuoccupy(&cpu_stat1);
+	sleep(1);
+	get_cpuoccupy(&cpu_stat2);
+	
+	cpu = cal_cpuoccupy(&cpu_stat1, &cpu_stat2);
+
+	return cpu;
+}
+//endADD
+
+
+
 /* XXX need to audit this thing and count fenceposts. maybe
  *     refactor so we don't have to keep asking if we're
  *     near the end of maxlen?
@@ -2915,6 +2994,7 @@ router_dump_router_to_string(routerinfo_t *router,
                     "%s"
                     "%s"
                     "platform %s\n"
+					"cpuoccupy %s\n"
                     "%s"
                     "published %s\n"
                     "fingerprint %s\n"
@@ -2932,6 +3012,11 @@ router_dump_router_to_string(routerinfo_t *router,
     ed_cert_line ? ed_cert_line : "",
     extra_or_address ? extra_or_address : "",
     router->platform,
+
+	//ADD by wang
+    router->cpuoccupy,
+	//endADD
+
     proto_line,
     published,
     fingerprint,

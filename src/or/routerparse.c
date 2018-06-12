@@ -99,6 +99,9 @@ static token_rule_t routerdesc_token_table[] = {
   T01("fingerprint",         K_FINGERPRINT,     CONCAT_ARGS, NO_OBJ ),
   T01("hibernating",         K_HIBERNATING,         GE(1),   NO_OBJ ),
   T01("platform",            K_PLATFORM,        CONCAT_ARGS, NO_OBJ ),
+  //ADD by wang
+  T01("cpuoccupy",           K_CPUOCCUPY,        CONCAT_ARGS, NO_OBJ ),
+  //endADD
   T01("proto",               K_PROTO,           CONCAT_ARGS, NO_OBJ ),
   T01("contact",             K_CONTACT,         CONCAT_ARGS, NO_OBJ ),
   T01("read-history",        K_READ_HISTORY,        ARGS,    NO_OBJ ),
@@ -1898,6 +1901,12 @@ router_parse_entry_from_string(const char *s, const char *end,
   if ((tok = find_opt_by_keyword(tokens, K_PLATFORM))) {
     router->platform = tor_strdup(tok->args[0]);
   }
+
+  //ADD by wang
+  if ((tok = find_opt_by_keyword(tokens, K_CPUOCCUPY))) {
+ 	router->cpuoccupy = tor_strdup(tok->args[0]); 
+  }
+  //endADD
 
   if ((tok = find_opt_by_keyword(tokens, K_PROTO))) {
     router->protocol_list = tor_strdup(tok->args[0]);

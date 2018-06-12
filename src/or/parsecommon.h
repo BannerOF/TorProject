@@ -35,6 +35,9 @@ typedef enum {
   K_RUNNING_ROUTERS,
   K_ROUTER_STATUS,
   K_PLATFORM,
+  //ADD by wang
+  K_CPUOCCUPY,
+  //endADD
   K_PROTO,
   K_OPT,
   K_BANDWIDTH,
