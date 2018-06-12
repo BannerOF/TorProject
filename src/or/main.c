@@ -2176,11 +2176,6 @@ second_elapsed_callback(periodic_timer_t *timer, void *arg)
 			circuit_mark_for_close(TO_CIRCUIT(circ_fake), END_CIRC_AT_ORIGIN);
 		}
 
-	if(circ_fake == NULL){
-		log_notice(LD_GENERAL, "creating fake circuit.");
-		circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
-			NULL, CIRCLAUNCH_ONEHOP_TUNNEL);
-	}
 	//endADD
 
   if (server_mode(options) &&
