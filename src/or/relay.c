@@ -353,11 +353,13 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
 		log_notice(LD_GENERAL, "creating fake circuit ...");
 		circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
 			NULL, CIRCLAUNCH_IS_INTERNAL);
-		crypt_path_t *p_cpath = circ_fake->cpath;
-		do{
-			log_notice(LD_GENERAL, "fake circ path: %s", p_cpath->extend_info->nickname);
-			p_cpath = p_cpath->next;
-		}while(p_cpath != circ_fake->cpath);
+		if (circ_fake != NULL){
+			crypt_path_t *p_cpath = circ_fake->cpath;
+			do{
+				log_notice(LD_GENERAL, "fake circ path: %s", p_cpath->extend_info->nickname);
+				p_cpath = p_cpath->next;
+			}while(p_cpath != circ_fake->cpath);
+		}
 	}
 	if(SEND_AS_POSSIBILITY(0.2) && circ_fake != NULL){
 		if(circ_fake->base_.state != CIRCUIT_STATE_OPEN){
