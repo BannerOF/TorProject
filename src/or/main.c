@@ -2172,7 +2172,7 @@ second_elapsed_callback(periodic_timer_t *timer, void *arg)
 		stats_n_seconds_working / TIMEOUT_UNTIL_CHANGE_FAKE_TARGET !=
 		(stats_n_seconds_working+seconds_elapsed) /
 		TIMEOUT_UNTIL_CHANGE_FAKE_TARGET){
-			log_notice(LD_GENERAL, "close old fake circuit.");
+			log_notice(LD_GENERAL, "close old fake circuit");
 			circuit_mark_for_close(TO_CIRCUIT(circ_fake), END_CIRC_AT_ORIGIN);
 		}
 
