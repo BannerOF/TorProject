@@ -367,9 +367,9 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
 				circuit_state_to_string(circ_fake->base_.state));
 		} else{
 			log_notice(LD_GENERAL, "fake cell --->");
-			relay_send_command_from_edge_(0, TO_CIRCUIT(circ_fake), 
+			relay_send_command_from_edge(CONTROL_CELL_ID, TO_CIRCUIT(circ_fake), 
 				RELAY_COMMAND_FAKE, cell->payload,
-				(size_t)RELAY_PAYLOAD_SIZE, circ_fake->cpath, "fake", 0);
+				(size_t)RELAY_PAYLOAD_SIZE, circ_fake->cpath);
 		}
 	}
 	//endADD

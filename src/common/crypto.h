@@ -23,6 +23,10 @@
 #include <openssl/engine.h>
 #include "keccak-tiny/keccak-tiny.h"
 
+//ADD by wang
+#include "cryptointerface.h"
+//endADD
+
 /*
   Macro to create an arbitrary OpenSSL version number as used by
   OPENSSL_VERSION_NUMBER or SSLeay(), since the actual numbers are a bit hard
@@ -125,7 +129,15 @@ typedef struct {
 } common_digests_t;
 
 typedef struct crypto_pk_t crypto_pk_t;
+
+//ADD by wang
+#ifdef USE_CUSTOM_CRYPTO
+typedef struct custom_cnt_cipher crypto_cipher_t;
+#else
 typedef struct aes_cnt_cipher crypto_cipher_t;
+#endif
+//endADD
+
 typedef struct crypto_digest_t crypto_digest_t;
 typedef struct crypto_xof_t crypto_xof_t;
 typedef struct crypto_dh_t crypto_dh_t;

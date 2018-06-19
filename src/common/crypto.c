@@ -554,8 +554,13 @@ crypto_cipher_new_with_iv_and_bits(const uint8_t *key,
 {
   tor_assert(key);
   tor_assert(iv);
-
-  return aes_new_cipher((const uint8_t*)key, (const uint8_t*)iv, bits);
+	//ADD by wang
+	#ifdef USE_CUSTOM_CRYPTO
+	return custom_new_cipher((const uint8_t*)key, (const uint8_t*)iv, bits);
+	#else
+	return aes_new_cipher((const uint8_t*)key, (const uint8_t*)iv, bits);
+	#endif
+  	//endADD
 }
 
 /** Allocate and return a new symmetric cipher using the provided key and iv.
@@ -597,7 +602,13 @@ crypto_cipher_free(crypto_cipher_t *env)
   if (!env)
     return;
 
-  aes_cipher_free(env);
+	//ADD by wang
+	#ifdef USE_CUSTOM_CRYPTO	
+	custom_cipher_free(env);
+	#else
+	aes_cipher_free(env);
+	#endif
+	//endADD
 }
 
 /* public key crypto */
@@ -1621,7 +1632,15 @@ crypto_cipher_encrypt(crypto_cipher_t *env, char *to,
   tor_assert(fromlen < SIZE_T_CEILING);
 
   memcpy(to, from, fromlen);
-  aes_crypt_inplace(env, to, fromlen);
+
+	//ADD by wang
+	#ifdef USE_CUSTOM_CRYPTO		
+	custom_crypt_inplace(env, to, fromlen);
+	#else
+	aes_crypt_inplace(env, to, fromlen);
+	#endif
+	//endADD
+
   return 0;
 }
 
@@ -1639,7 +1658,15 @@ crypto_cipher_decrypt(crypto_cipher_t *env, char *to,
   tor_assert(fromlen < SIZE_T_CEILING);
 
   memcpy(to, from, fromlen);
-  aes_crypt_inplace(env, to, fromlen);
+
+	//ADD by wang
+	#ifdef USE_CUSTOM_CRYPTO
+	custom_crypt_inplace(env, to, fromlen);
+	#else
+	aes_crypt_inplace(env, to, fromlen);
+	#endif
+  	//endADD
+
   return 0;
 }
 
@@ -1650,7 +1677,15 @@ void
 crypto_cipher_crypt_inplace(crypto_cipher_t *env, char *buf, size_t len)
 {
   tor_assert(len < SIZE_T_CEILING);
-  aes_crypt_inplace(env, buf, len);
+
+	//ADD by wang
+	#ifdef USE_CUSTOM_CRYPTO
+	custom_crypt_inplace(env, buf, len);
+	#else
+	aes_crypt_inplace(env, buf, len);
+	#endif
+	//endADD
+
 }
 
 /** Encrypt <b>fromlen</b> bytes (at least 1) from <b>from</b> with the key in
