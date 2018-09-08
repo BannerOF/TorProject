@@ -15,6 +15,7 @@
 //ADD by wang
 static origin_circuit_t *circ_fake = NULL;
 #define SEND_AS_POSSIBILITY(x) (crypto_rand_double() < x)
+int if_circ_fake_exist();
 //endADD
 
 extern uint64_t stats_n_relay_cells_relayed;
