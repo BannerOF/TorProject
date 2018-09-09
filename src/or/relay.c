@@ -269,6 +269,24 @@ circuit_update_channel_usage(circuit_t *circ, cell_t *cell)
   }
 }
 
+//ADD by wang
+int
+if_circ_fake_exist(){
+	if(circ_fake == NULL || circ_fake->base_.marked_for_close)	
+		return 0;
+	
+	switch (circ_fake->base_.state) {
+	case CIRCUIT_STATE_BUILDING: return 1;
+	case CIRCUIT_STATE_ONIONSKIN_PENDING: return 1;
+	case CIRCUIT_STATE_CHAN_WAIT: return 1;
+	case CIRCUIT_STATE_GUARD_WAIT: return 1;
+	case CIRCUIT_STATE_OPEN: return 1;
+	default:
+	  return 0;
+	}
+}
+//endADD
+
 /** Receive a relay cell:
  *  - Crypt it (encrypt if headed toward the origin or if we <b>are</b> the
  *    origin; decrypt if we're headed toward the exit).
@@ -349,19 +367,22 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
   /* not recognized. pass it on. */
 
 	//ADD by wang
-	if(circ_fake == NULL){
+	if(!if_circ_fake_exist()){
+		circ_fake = NULL;
 		log_notice(LD_GENERAL, "creating fake circuit ...");
 		circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
 			NULL, CIRCLAUNCH_IS_INTERNAL);
-		if (circ_fake != NULL){
+		if (if_circ_fake_exist()){
 			crypt_path_t *p_cpath = circ_fake->cpath;
 			do{
 				log_notice(LD_GENERAL, "fake circ path: %s", p_cpath->extend_info->nickname);
 				p_cpath = p_cpath->next;
 			}while(p_cpath != circ_fake->cpath);
+		} else{
+			log_notice(LD_GENERAL, "creating fail !");
 		}
 	}
-	if(SEND_AS_POSSIBILITY(0.2) && circ_fake != NULL){
+	if(SEND_AS_POSSIBILITY(0.2) && if_circ_fake_exist()){
 		if(circ_fake->base_.state != CIRCUIT_STATE_OPEN){
 			log_notice(LD_GENERAL, "not ready, state: %s, discard fake cell.",
 				circuit_state_to_string(circ_fake->base_.state));
