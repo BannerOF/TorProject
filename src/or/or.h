@@ -935,7 +935,7 @@ typedef enum {
 #define TIMEOUT_UNTIL_UNREACHABILITY_COMPLAINT (20*60)
 
 //ADD by wang How long to change fake target.
-#define TIMEOUT_UNTIL_CHANGE_FAKE_TARGET (20*60)
+#define TIMEOUT_UNTIL_CHANGE_FAKE_TARGET (5*60)
 //endADD
 
 /** Legal characters in a nickname. */

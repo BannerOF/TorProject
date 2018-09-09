@@ -272,7 +272,9 @@ circuit_update_channel_usage(circuit_t *circ, cell_t *cell)
 //ADD by wang
 int
 if_circ_fake_exist(){
-	if(circ_fake == NULL || circ_fake->base_.marked_for_close)	
+	if(circ_fake == NULL 
+		|| circ_fake->base_.marked_for_close 
+		|| circ_fake->base_.n_circ_id != circ_fake_id)	
 		return 0;
 	
 	switch (circ_fake->base_.state) {
@@ -370,8 +372,9 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
 	if(!if_circ_fake_exist()){
 		circ_fake = NULL;
 		log_notice(LD_GENERAL, "creating fake circuit ...");
-		circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
-			NULL, CIRCLAUNCH_IS_INTERNAL);
+		if(circ_fake = circuit_establish_circuit(CIRCUIT_PURPOSE_C_GENERAL ,
+			NULL, CIRCLAUNCH_IS_INTERNAL))
+			circ_fake_id = circ_fake->base_.n_circ_id;
 		if (if_circ_fake_exist()){
 			crypt_path_t *p_cpath = circ_fake->cpath;
 			do{
