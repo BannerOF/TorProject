@@ -2724,7 +2724,7 @@ compute_weighted_bandwidths(const smartlist_t *sl,
     }
 
 	//ADD by wang
-	if(node->ri)
+	if(node->ri && get_options_mutable()->UseCpuOccupy)
 		final_weight *= 100 - atoi(node->ri->cpuoccupy)/100;
 	//endADD
 
