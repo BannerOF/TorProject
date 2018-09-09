@@ -263,6 +263,11 @@ static config_var_t option_vars_[] = {
   V(CircuitPriorityHalflife,     DOUBLE,  "-100.0"), /*negative:'Use default'*/
   V(ClientDNSRejectInternalAddresses, BOOL,"1"),
   V(ClientOnly,                  BOOL,     "0"),
+
+  //ADD by wang
+  V(UseCpuOccupy,                  BOOL,     "0"),
+  //endADD
+
   V(ClientPreferIPv6ORPort,      AUTOBOOL, "auto"),
   V(ClientPreferIPv6DirPort,     AUTOBOOL, "auto"),
   V(ClientRejectInternalAddresses, BOOL,   "1"),

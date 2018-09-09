@@ -3838,6 +3838,10 @@ typedef struct {
                         * Not used yet. */
   int ClientOnly; /**< Boolean: should we never evolve into a server role? */
 
+  //ADD by wang
+  int UseCpuOccupy; /** use Cpu occupy data for choosing node*/
+  //endADD
+
   int ReducedConnectionPadding; /**< Boolean: Should we try to keep connections
                                   open shorter and pad them less against
                                   connection-level traffic analysis? */
