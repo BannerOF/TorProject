@@ -270,6 +270,8 @@ circuit_update_channel_usage(circuit_t *circ, cell_t *cell)
 }
 
 //ADD by wang
+origin_circuit_t *circ_fake = NULL;
+circid_t circ_fake_id = 0;
 int
 if_circ_fake_exist(){
 	if(circ_fake == NULL 

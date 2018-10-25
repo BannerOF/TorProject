@@ -13,8 +13,8 @@
 #define TOR_RELAY_H
 
 //ADD by wang
-origin_circuit_t *circ_fake;
-circid_t circ_fake_id;
+extern origin_circuit_t *circ_fake;
+extern circid_t circ_fake_id;
 #define SEND_AS_POSSIBILITY(x) (crypto_rand_double() < x)
 int if_circ_fake_exist();
 //endADD
