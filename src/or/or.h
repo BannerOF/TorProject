@@ -2215,6 +2215,8 @@ typedef struct {
 
   //ADD by wang
   char *cpuoccupy;
+  char *da1;
+  char *da2;
   //endADD
 
   char *protocol_list; /**< Encoded list of subprotocol versions supported
@@ -2295,6 +2297,12 @@ typedef struct extrainfo_t {
   /** If present, we didn't have the right key to verify this extra-info,
    * so this is a copy of the signature in the document. */
   char *pending_sig;
+
+  //ADD by wang
+  char *da1;
+  char *da2;
+  //endADD
+
   /** Length of pending_sig. */
   size_t pending_sig_len;
 } extrainfo_t;

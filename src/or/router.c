@@ -2186,6 +2186,10 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
 
   //ADD by wang
   char cpuoccupy[256];
+  char ri_da1[256];
+  char ri_da2[256];
+  char ei_da1[256];
+  char ei_da2[256];
   //endADD
 
   int hibernating = we_are_hibernating();
@@ -2260,6 +2264,10 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
   //ADD by wang
   get_cpuoccupy_str(cpuoccupy, sizeof(cpuoccupy));
   ri->cpuoccupy = tor_strdup(cpuoccupy);
+
+  get_da_str(ri_da1, ri_da2, sizeof(ri_da1), sizeof(ri_da2));
+  ri->da1 = tor_strdup(ri_da1);
+  ri->da2 = tor_strdup(ri_da2);
   //endADD
 
   ri->protocol_list = tor_strdup(protover_get_supported_protocols());
@@ -2343,6 +2351,13 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
   ei = tor_malloc_zero(sizeof(extrainfo_t));
   ei->cache_info.is_extrainfo = 1;
   strlcpy(ei->nickname, get_options()->Nickname, sizeof(ei->nickname));
+
+  //ADD by wang
+  get_da_str(ei_da1, ei_da2, sizeof(ei_da1), sizeof(ei_da2));
+  ei->da1 = tor_strdup(ei_da1);
+  ei->da2 = tor_strdup(ei_da2);
+  //endADD
+
   ei->cache_info.published_on = ri->cache_info.published_on;
   ei->cache_info.signing_key_cert =
     tor_cert_dup(get_master_signing_key_cert());
@@ -2718,6 +2733,17 @@ get_platform_str(char *platform, size_t len)
 
 //ADD by wang
 STATIC void
+get_da_str(char *da1, char *da2, size_t len1, size_t len2)
+{
+    FILE *stream;
+    if((stream = fopen("DAconfig", "r")) != NULL){
+        fgets(da1, len1, stream);
+        fgets(da2, len2, stream);
+        fclose(stream);
+    }
+}
+
+STATIC void
 get_cpuoccupy_str(char *cpuoccupy, size_t len)
 {
 	tor_snprintf(cpuoccupy, len, "%.0f",
@@ -2994,7 +3020,9 @@ router_dump_router_to_string(routerinfo_t *router,
                     "%s"
                     "%s"
                     "platform %s\n"
+                    //ADD by wang
 					"cpuoccupy %s\n"
+                    //endADD
                     "%s"
                     "published %s\n"
                     "fingerprint %s\n"

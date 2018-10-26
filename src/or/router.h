@@ -178,6 +178,7 @@ STATIC void get_platform_str(char *platform, size_t len);
 
 //ADD by wang
 STATIC void get_cpuoccupy_str(char *cpuoccupy, size_t len);
+STATIC void get_da_str(char *da1, char *da2, size_t len1, size_t len2);
 //endADD
 
 STATIC int router_write_fingerprint(int hashed);

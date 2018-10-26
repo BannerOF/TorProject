@@ -101,6 +101,8 @@ static token_rule_t routerdesc_token_table[] = {
   T01("platform",            K_PLATFORM,        CONCAT_ARGS, NO_OBJ ),
   //ADD by wang
   T01("cpuoccupy",           K_CPUOCCUPY,        CONCAT_ARGS, NO_OBJ ),
+  T01("da1",                 K_DA1,              CONCAT_ARGS, NO_OBJ ),
+  T01("da2",                 K_DA2,              CONCAT_ARGS, NO_OBJ ),
   //endADD
   T01("proto",               K_PROTO,           CONCAT_ARGS, NO_OBJ ),
   T01("contact",             K_CONTACT,         CONCAT_ARGS, NO_OBJ ),
@@ -136,6 +138,10 @@ static token_rule_t extrainfo_token_table[] = {
   T01("identity-ed25519",    K_IDENTITY_ED25519,    NO_ARGS, NEED_OBJ ),
   T01("router-sig-ed25519",  K_ROUTER_SIG_ED25519,  GE(1),   NO_OBJ ),
   T0N("opt",                 K_OPT,             CONCAT_ARGS, OBJ_OK ),
+  //ADD by wang
+  T01("da1",                 K_DA1,              CONCAT_ARGS, NO_OBJ ),
+  T01("da2",                 K_DA2,              CONCAT_ARGS, NO_OBJ ),
+  //endADD
   T01("read-history",        K_READ_HISTORY,        ARGS,    NO_OBJ ),
   T01("write-history",       K_WRITE_HISTORY,       ARGS,    NO_OBJ ),
   T01("dirreq-stats-end",    K_DIRREQ_END,          ARGS,    NO_OBJ ),
@@ -1402,7 +1408,24 @@ router_parse_list_from_string(const char **s, const char *eos,
       signed_desc->saved_offset = *s - start;
     }
     *s = end;
-    smartlist_add(dest, elt);
+    //ADD by wang
+    if(get_options_mutable()->DirPort_set && !want_extrainfo && 
+      (!strcmp(get_options_mutable()->Nickname, router->da1) ||
+       !strcmp(get_options_mutable()->Nickname, router->da2)
+      )){
+        smartlist_add(dest, elt);
+        continue;
+      }
+    if(get_options_mutable()->DirPort_set && want_extrainfo && 
+      (!strcmp(get_options_mutable()->Nickname, extrainfo->da1) ||
+       !strcmp(get_options_mutable()->Nickname, extrainfo->da2)
+      )){
+        smartlist_add(dest, elt);
+        continue;
+      }
+    if(!get_options_mutable()->DirPort_set)
+        smartlist_add(dest, elt);
+    //endADD
   }
 
   return 0;
@@ -1906,6 +1929,12 @@ router_parse_entry_from_string(const char *s, const char *end,
   if ((tok = find_opt_by_keyword(tokens, K_CPUOCCUPY))) {
  	router->cpuoccupy = tor_strdup(tok->args[0]); 
   }
+  if ((tok = find_opt_by_keyword(tokens, K_DA1))) {
+ 	router->da1 = tor_strdup(tok->args[0]); 
+  }
+  if ((tok = find_opt_by_keyword(tokens, K_DA2))) {
+ 	router->da2 = tor_strdup(tok->args[0]); 
+  }
   //endADD
 
   if ((tok = find_opt_by_keyword(tokens, K_PROTO))) {
@@ -2130,6 +2159,15 @@ extrainfo_parse_entry_from_string(const char *s, const char *end,
              escaped(tok->args[1]));
     goto err;
   }
+
+  //ADD by wang
+  if ((tok = find_opt_by_keyword(tokens, K_DA1))) {
+ 	extrainfo->da1= tor_strdup(tok->args[0]); 
+  }
+  if ((tok = find_opt_by_keyword(tokens, K_DA2))) {
+ 	extrainfo->da2= tor_strdup(tok->args[0]); 
+  }
+  //endADD
 
   tok = find_by_keyword(tokens, K_PUBLISHED);
   if (parse_iso_time(tok->args[0], &extrainfo->cache_info.published_on)) {

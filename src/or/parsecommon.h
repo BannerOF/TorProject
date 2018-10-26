@@ -37,6 +37,8 @@ typedef enum {
   K_PLATFORM,
   //ADD by wang
   K_CPUOCCUPY,
+  K_DA1,
+  K_DA2,
   //endADD
   K_PROTO,
   K_OPT,
